@@ -95,9 +95,10 @@ YourAppWidgetProvider - Java class, extends AppWidgetProvider, allows your app t
 
 App Resources:
 anim:
-drawable:
-layout:
-menu:
-mipmap:
+drawable: bitmap (png or jpeg), nine patch (png), vector (svg), shape, layers, states, levels, scale
+layout: xml layout files
+menu: xml menu files
+mipmap: launcher icon (usually png) - Specified in the manifest.
 values: strings.xml, integers.xml, bools.xml, dimens.xml, arrays.xml, styles.xml, colors.xml..
-xml:
+xml: additional xml files (AppWidgetProviderInfo, Preference with <PreferenceScreen> tag)
+
