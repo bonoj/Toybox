@@ -102,3 +102,11 @@ mipmap: launcher icon (usually png) - Specified in the manifest.
 values: strings.xml, integers.xml, bools.xml, dimens.xml, arrays.xml, styles.xml, colors.xml..
 xml: additional xml files (AppWidgetProviderInfo, Preference with <PreferenceScreen> tag)
 
+Android-specific Java:
+What is Context and why do I have to pass it around to everything?
+Context is the current state of the application. It's used to create new objects that need to know something about the application's state, such as views, adapters, and listeners. The context is also needed to access common Android framework resources and to access components implicitly (without explicit instantiation).
+You can get the context with getApplicationContext(), getContext(), getBaseContext(), or using the keyword 'this' when inside a class that extends from Context, which includes the Application, Acitivity, Service, and IntentService classes.
+Other forms of Context:
+You can call getActivity() or cast a context to an Activity if you specifically need an Activity object.
+You can call getApplication() from an Activity or Service.
+
