@@ -65,6 +65,7 @@ Activity lauched-> onCreate() -> onStart() -> onResume() -> Activity runs in for
 
 We use Intents to move between activities, packaging extra information with the intent using the various putExtra() methods.
 
+
 Some important pieces of the Android Framework:
 
 Fragments:
@@ -82,3 +83,21 @@ YourContract + YourDbHelper define the table and column names and create the SQL
 YourProvider provides access to the database's Query, Insert, Update, and Delete methods
 
 Schematic is a third party library that simplifies the creation of ContentProviders and SQLite Databases, reducing the need to write as much boilerplate code.
+
+
+Awesome Libraries:
+Networking: Volley / Retrofit
+Image Loading and Caching: Glide / Picasso
+
+Widgets:
+AppWidgetProviderInfo - XML file, describes layout, update frequency, and AppWidgetProvider class name
+YourAppWidgetProvider - Java class, extends AppWidgetProvider, allows your app to receive broadcasts from the system when its associated widget is created, updated, enabled, disabled, or deleted.
+
+App Resources:
+anim:
+drawable:
+layout:
+menu:
+mipmap:
+values: strings.xml, integers.xml, bools.xml, dimens.xml, arrays.xml, styles.xml, colors.xml..
+xml:
