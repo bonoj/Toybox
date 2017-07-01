@@ -1,0 +1,84 @@
+How do we write and build Android applications and what goes into them?
+
+Start with installing Android studio and a brief overview of project and android structures, the separation of Java and XML, and the location of the app level build.gradle file.
+
+Java - executed progrommatically at runtime. This is where we do the bulk of our programming, handling most of our app's logic, interacting with the Android system, our stored data, make network calls, etc.
+
+XML - layouts are parsed at compile time, save for things like relative positioning which are dependent on device type and can only be known only at runtime. XML should be kept as free of logic as possible. That being said, there are some attributes, like the onClick attribute, that blur these lines a bit, and some very powerful attributes for UI/UX that save us a lot of time as programmers, like collapsing toolbars with parallax, or handling View animations and transitions.
+
+Gradle:
+Gradle is the build system used to assemble the various pieces of our application and bundle (package) them into an apk (application package), which is analogous to an executable. The Android system runs .apk files. Gradle uses a scripting language called Groovy. You can dive really deeply into Android development without needing to become a Gradle expert or formally learn Groovy, so do not be afraid of this (initially) scary black box. It's okay if the whole Gradle build process feels overwhelming and nerve-racking at first. In time you will gain confidence. Trust me.
+
+Gradle tips to serve up right away, maybe even before Hello World, to help solve those terrifying seemingly arcane issues that can stop your app from building and running:
+1. When you first create your new application, build and run it. Once you have a deployed a working build, you know your build.gradle files are properly configured. Now you have a safe base to work from and return to if you encounter problems and you absolutely cannot find a solution!
+2. Changes will mostly be made to the app level build.gradle file, rarely to the project level. (The project level build.gradle is located in the root project folder, app level in the app folder). Changes you make will usually be for the inclusion of new libraries. Think of libraries as collections of methods that can be tailored to our needs, like making network calls or caching images, thereby reducing the need to for us to create everything from scratch. When you first start, the only thing you will really need to worry about is making sure that the app you are working with is compatible with your Android SDK Platforms and Tools. If you created the project yourself, chances are good that everything will work properly from the outset. If you've imported someone else's project, then you'll want to either install the version of the SDK they were working with (File->Settings->System Settings->Android SDK) or update the project's build.gradle compileSdkVersion and buildToolsVersion to match the version of the Android SDK Platforms and Tools you have installed. You'll need to change a few other things as well... targetSdkVersion should match compileSdkVersion and all library dependences in the dependencies{} block should begin with the same SDK version, for instance, if your compileSdkVersion is 25 and you're using the appcompat support library, you'll want to see something like, 'com.android.support:appcompat-v7:25.3.1'
+We'll cover library dependencies later, but for now, just take a deep breathe and be confident that although Gradle may feel a bit mystical and magical at the moment, it won't be long before you become comfortable making changes and adding useful libraries to your project.
+3. Sometimes you need to Clean and Rebuild the project (Build->Clean, Build->Rebuild) before you redeploy to an emulator or your device. It's often a good idea to pair this rebuild with an uninstall of the existing version of your application on your device before you redeploy.
+4. If you've tried the steps above and you're still having issues, copy and paste the non application package specific portions of a Gradle build error into a Google search and the first result will almost always be a helpful, detailed solution on Stack Overflow.
+
+App resources: These are things like image, sound, and video files that your app may contain. These are often found in the res folder.
+
+
+App Fundamentals:
+
+The four components of an app provided by the Android framework. These are four separate access points into the app and each one is an equally valid starting point allowing for specific interactions.
+
+Activities - our most common access point for a user's interaction with our app. They are tightly coupled to the View (the layout and the XML), and will be full of Android specific code to gather and relay or process user input. A natural Controller for the MVC pattern.
+
+Services - allow us to keep our apps running in the background to take care of longrunning operations after the user has exited our app (and even after all associated activies have been destroyed). IntentServices are a special subclass of Service that runs on a background thread rather than the application's main thread, which means the user can still use your app when the IntentService is doing work. For regularly scheduled services like syncing with a cloud database targeting API 21+, using JobScheduler (or Firebase JobDispatcher) is recommended.
+
+Broadcast Receivers - allow us to listen for, receive, and send systemwide messages, if necessary, even when our app is not running. Through broadcasts, we can interact with the system and with other applications.
+
+Content Providers - provide us with an additional layer of abstraction between our app data stored in the file system, SQLite databases, in the cloud, or in any other persistent storage location. Content Providers also allow us to provide an access point to our data to other applications if we so desire, even allowing full read/write privileges. Content URIs (paths pointing to the data storage location) can be assigned even when our app isn't running. Certain components of our app do need to be running in order to retrieve information from storage when a retrieval request is made by another authorized app, but the requesting app is able start the process for our app if it isn't already running.
+
+So how are these four components activated?
+Intents. Either implicit (asks the system, "Is there an app that can handle this type of component?") or explicit (tells the system, "Use this specific component of this specific application.")
+
+What is an Android Manifest?
+The Android system can only start app components that are declared in our app's manifest file, AndroidManifest.xml
+Components are declared between the <application> </application> tags, and have intuitive tags:
+<activity> <service> <receiver> <provider>
+Within these component tags, we specify their capabilities.
+Outside of the <application> tag, we declare our app's permissions, features, and requirements. For instance, the <uses-permission android:name="android.permission.INTERNET" /> is a very common inclusion if your app will be receiving or sending any information over the internet.
+
+
+The Android Platform Architecture:
+Great outline available at https://developer.android.com/guide/platform/index.html
+Five layers in descending order:
+
+5. App Layer. This is where our app runs. It is also where we find the System Apps which our app might commonly use an Intent to harness. Third party apps can become defaults if the user chooses, like when a user chooses to use Gmail rather than the default Email app.
+
+4. Java API Framework. This is where the classes for the View system (UI) are housed, as well as Content Providers and various Managers for Activity, Location, Notification, etc. We instantiate these classes to get access to their methods. The View system, for instance, provides us with Views (and all of the special types of Views like TextViews that subclass the View class.
+
+3. Android Runtime, as well as the Native C/C++ libraries.
+Houses the ART (Android Runtime) and its core Java libraries, as well as Native C or C++ libraries like Webkit for browsers, Open GL ES for graphics, etc. We can access these Native libraries directly through the Android NDK, or sometimes through Java APIs provided by the Android framework. Sometimes third party engines, frameworks, or libraries function similarly, translating our managed Java code and calling the appropriate methods in the Native C/C++ libraries.
+
+2. Hardware Abstraction Layer (HAL)
+Audio, Camera, Sensors, etc. We go through the Java API Framework to get access to hardware functionality. The Android system takes care of loading the library modules for the specific hardware components.
+
+1. Linux Kernel
+Foundation of the Android platform, handles such things as concurrency, threading, low-level memory management, and hardware drivers.
+
+The Activity Lifecycle:
+https://developer.android.com/guide/components/activities/activity-lifecycle.html
+Activity lauched-> onCreate() -> onStart() -> onResume() -> Activity runs in foreground until another activity is brought to foreground -> onPause() (if user returns to the activity from onPause, onResume is called) -> (activity is no longer visible) onStop() (if user navigates back to the activity, onRestart() is called, followed by onStart() and then onResume()) -> (activity is finishing or being destroyed by the system) onDestroy() -> Activity is shut down
+
+We use Intents to move between activities, packaging extra information with the intent using the various putExtra() methods.
+
+Some important pieces of the Android Framework:
+
+Fragments:
+These can add a lot of complexity to an application, so be sure before you begin using fragments that you actually require their functionality and you've weighed the costs of implementation. The goal is to make layouts more flexible and responsive across all devices. An activity might have two FrameLayouts, for instance, each capable of housing a fragment. Each fragment has its own XML layout file that gets inflated when the fragment is visible. On a phone, you might have one fragment visible at a time, hiding it in order to display the other, whereas on a tablet, you have the screen real estate to display both. Complications arise from the fact that fragments have their own lifecycles, tied to the launching activity's lifecycle, but two fragments displayed on the same screen need not share the same launching activity. There is also the business of communicating between fragments, their activities, other fragments, and other activities. If you don't have a solid understanding of how to build and implement an interface, using fragments may lead to a lot of frustration initially, but will ultimately teach you a lot, even if you don't end up using them in all or even most of your Android projects and applications.
+
+Loaders:
+Using Loaders allows us to easily, efficiently, and asynchronously load data from a database (through our Content Provider!) or another data source into our the Views controlled by our Activity or Fragment. Loaders keep the UI thread of stuttering or locking up when we have a lot of data to retrieve and display. They also persist and cache the information they retrieve during rotation changes, reducing calls to our data source and they provide convenient callbacks through LoaderManager.LoaderCallbacks to notify our activity or fragment when our data is ready for use/display.
+
+Content Provider / SQLite Database classes:
+YourContract
+YourDbHelper extends SQLiteOpenHelper
+YourProvider extends ContentProvider
+
+YourContract + YourDbHelper define the table and column names and create the SQLite Database
+YourProvider provides access to the database's Query, Insert, Update, and Delete methods
+
+Schematic is a third party library that simplifies the creation of ContentProviders and SQLite Databases, reducing the need to write as much boilerplate code.
